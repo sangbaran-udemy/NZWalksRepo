@@ -20,13 +20,79 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllRegions()
+        public async Task<IActionResult> GetAllRegionsAsync()
         {
             var regions = await regionRepository.GetAllAsync();
             var regionsDTO = mapper.Map<List<Models.DTO.Region>>(regions);
             
-            return Ok(regionsDTO);
-            
+            return Ok(regionsDTO);            
+        }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        [ActionName("GetRegionAsync")]
+        public async Task<IActionResult> GetRegionAsync(Guid id)
+        {
+            var region = await regionRepository.GetAsync(id);
+
+            if (region != null)
+            {
+                var regionDTO = mapper.Map<Models.DTO.Region>(region);
+                return Ok(regionDTO);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRegionAsync(AddRegionRequest addRegionRequest)
+        {
+            // Convert DTO to Domain model..
+            var region = mapper.Map<Models.Domain.Region>(addRegionRequest);
+
+            // Pass data to Repo..
+            region = await regionRepository.AddAsync(region);
+
+            // Convert Domain model back to DTO..
+            var regionDTO = mapper.Map<Models.DTO.Region>(region);
+            return CreatedAtAction(nameof(GetRegionAsync), new { id = regionDTO.Id }, regionDTO);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteRegionAsync(Guid id)
+        {
+            // Delete the region..
+            var region = await regionRepository.DeleteAsync(id);
+
+            // Convert the domain model back to DTO..
+            if (region != null)
+            {
+                var regionDTO = mapper.Map<Models.DTO.Region>(region);
+                return Ok(regionDTO);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateRegionAsync([FromRoute] Guid id, [FromBody] UpdateRegionRequest updateRegionRequest)
+        {
+            // Convert the DTO to a Domain model..
+            var region = mapper.Map<Models.Domain.Region>(updateRegionRequest);
+
+            // Update the Domain model..
+            region = await regionRepository.UpdateAsync(id, region);
+
+            // Convert the Domain to a DTO..
+            if (region != null)
+            {
+                var regionDTO = mapper.Map<Models.DTO.Region>(region);
+                return Ok(regionDTO);
+            }
+
+            return NotFound();
         }
     }
 }
