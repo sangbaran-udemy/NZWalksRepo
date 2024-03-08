@@ -13,10 +13,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<NZWalksDBContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalks"));
+    options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["NZWalks"]);
 });
 
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();

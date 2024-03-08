@@ -51,11 +51,8 @@ namespace NZWalks.API.Repositories
             if(regionToUpdate != null)
             {
                 regionToUpdate.Code = region.Code;
-                regionToUpdate.Area = region.Area;
-                regionToUpdate.Latitude = region.Latitude;
-                regionToUpdate.Longitude = region.Longitude;
                 regionToUpdate.Name = region.Name;
-                regionToUpdate.Population = region.Population;
+                regionToUpdate.RegionImageUrl = region.RegionImageUrl;
 
                 await nZWalksDBContext.SaveChangesAsync();
                 return regionToUpdate;
